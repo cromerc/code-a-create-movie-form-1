@@ -41,7 +41,8 @@ function clearInput() {
 </script>
 
 <template>
-  <div class="fixed z-10 left-1/2 top-1/2 w-1/4" v-show="addMovieVisible">
+  <div v-if="addMovieVisible" class="fixed z-10 w-full h-full bg-gray-200 dark:bg-gray-900 opacity-90" />
+  <div class="fixed z-20 left-1/2 top-1/2 w-1/4" v-show="addMovieVisible">
     <div class="p-2 relative text-white bg-gray-200 dark:bg-gray-900 -translate-x-1/2 -translate-y-1/2 rounded-lg">
       <div class="grid grid-cols-1 font-bold m-2 gap-2">
         <div>Name</div>
@@ -77,7 +78,8 @@ function clearInput() {
   </div>
   <div class="app flex flex-col space-y-4">
     <div class="">
-      <button @click="showAddMovie" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add
+      <button @click="showAddMovie" :disabled="addMovieVisible"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add
         Movie</button>
     </div>
     <div class="movie-list">
