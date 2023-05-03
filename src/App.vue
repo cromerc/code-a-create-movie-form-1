@@ -14,6 +14,13 @@ const image = ref("");
 const selectedGenre = ref([]);
 const inTheaters = ref(false);
 
+const errors = ref({
+  name: false,
+  description: false,
+  image: false,
+  selectedGenre: false
+});
+
 function updateRating(movieIndex, rating) {
   movies.value[movieIndex].rating = rating;
 }
@@ -28,6 +35,43 @@ function cancelAddMovie() {
 }
 
 function addMovie() {
+  resetErrors();
+
+  if (name.value.trim() === "") {
+    errors.value.name = true;
+  }
+
+  if (description.value.trim() === "") {
+    errors.value.description = true;
+  }
+
+  if (image.value.trim() === "") {
+    errors.value.image = true;
+  }
+
+  if (selectedGenre.value.length === 0) {
+    errors.value.selectedGenre = true;
+  }
+
+  for (const key in errors.value) {
+    if (Object.hasOwnProperty.call(errors.value, key)) {
+      const element = errors.value[key];
+      if (element) {
+        return;
+      }
+    }
+  }
+
+  movies.value.push({
+    "id": movies.value.slice(-1)[0].id + 1,
+    "name": name.value,
+    "description": description.value,
+    "image": image.value,
+    "rating": 0,
+    "genres": selectedGenre.value,
+    "inTheaters": inTheaters.value
+  });
+  addMovieVisible.value = false;
   clearInput();
 }
 
@@ -37,6 +81,15 @@ function clearInput() {
   image.value = "";
   selectedGenre.value = [];
   inTheaters.value = false;
+  resetErrors();
+}
+
+function resetErrors() {
+  for (const key in errors.value) {
+    if (Object.hasOwnProperty.call(errors.value, key)) {
+      errors.value[key] = false;
+    }
+  }
 }
 </script>
 
@@ -46,19 +99,31 @@ function clearInput() {
     <div class="p-2 relative text-white bg-gray-200 dark:bg-gray-900 -translate-x-1/2 -translate-y-1/2 rounded-lg">
       <div class="grid grid-cols-1 font-bold m-2 gap-2">
         <div>Name</div>
-        <div><input class="text-black w-full" type="text" v-model="name" /></div>
+        <div>
+          <input class="text-black w-full" :class="[errors.name ? 'border-red-500' : '']" type="text" v-model="name" />
+          <div v-if="errors.name" class="pt-1 text-red-500 text-xs">Name is required!</div>
+        </div>
 
         <div class="pt-4">Description</div>
-        <div><textarea class="text-black w-full" v-model="description" /></div>
+        <div>
+          <textarea class="text-black w-full" :class="[errors.description ? 'border-red-500' : '']"
+            v-model="description" />
+          <div v-if="errors.description" class="pt-1 text-red-500 text-xs">Description is required!</div>
+        </div>
 
         <div class="pt-4">Image</div>
-        <div><input class="text-black w-full" type="text" v-model="image" /></div>
+        <div>
+          <input class="text-black w-full" :class="[errors.image ? 'border-red-500' : '']" type="text" v-model="image" />
+          <div v-if="errors.image" class="pt-1 text-red-500 text-xs">Image is required!</div>
+        </div>
 
         <div class="pt-4">Genres</div>
         <div>
-          <select class="text-black w-full" v-model="selectedGenre" multiple>
+          <select class="text-black w-full" :class="[errors.image ? 'border-red-500' : '']" v-model="selectedGenre"
+            multiple>
             <option v-for="genre in genres">{{ genre }}</option>
           </select>
+          <div v-if="errors.selectedGenre" class="pt-1 text-red-500 text-xs">One genre is required!</div>
         </div>
 
         <div class="pt-4">In theaters <input class="text-black" type="checkbox" v-model="inTheaters" /></div>
